@@ -1,0 +1,329 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport"
+    content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+  <meta name="description"
+    content="UniFocus Student Platform - Aplicativo inteligente para produtividade e foco estudantil">
+
+  <!-- Mobile App / PWA Meta Tags -->
+  <meta name="theme-color" content="#0061a4">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="UniFocus">
+  <meta name="mobile-web-app-capable" content="yes">
+  <link rel="manifest" href="manifest.json">
+
+  <title>UniFocus - App de Estudos</title>
+
+  <!-- Design System CSS -->
+  <link rel="stylesheet" href="css/style.css">
+  <link rel="icon" type="image/svg+xml"
+    href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%230061a4'><path d='M12 3L1 9l11 6 9-4.91V17h2V9L12 3z'/></svg>">
+</head>
+
+<body>
+
+  <!-- ==================== Top App Bar Header ==================== -->
+  <header class="top-header" role="banner">
+    <div class="header-user-info">
+      <button class="user-avatar-btn" aria-label="Perfil do Estudante">A</button>
+      <div class="student-greeting">
+        <span class="greeting-subtitle">Bem-vindo(a) de volta</span>
+        <h1 class="student-name">Davidson Cupertino</h1>
+      </div>
+    </div>
+
+    <div class="header-actions">
+      <!-- Streak Counter -->
+      <button class="streak-badge" id="streakBadge" aria-label="Ofensiva de 15 dias de estudo">
+        <span class="streak-count">15</span>
+        <span class="material-symbols-outlined filled streak-icon"
+          data-icon="local_fire_department">local_fire_department</span>
+      </button>
+
+      <!-- Theme Switcher -->
+      <button class="header-btn" id="themeToggleBtn" aria-label="Alternar tema claro/escuro" title="Alternar tema">
+        <span class="material-symbols-outlined" id="themeToggleIcon">dark_mode</span>
+      </button>
+
+      <!-- Settings Button -->
+      <button class="header-btn" aria-label="Configurações do aplicativo" title="Configurações">
+        <span class="material-symbols-outlined">settings</span>
+      </button>
+    </div>
+  </header>
+
+  <!-- ==================== Main Application Canvas ==================== -->
+  <div class="app-container">
+
+    <!-- Desktop Sidebar Navigation -->
+    <aside class="sidebar" aria-label="Navegação Lateral">
+      <div class="neomorphic-card sidebar-card">
+
+        <!-- Brand Header / Logo -->
+        <div class="brand-header">
+          <img
+            src="https://lh3.googleusercontent.com/aida-public/AB6AXuCISmGhB0NZxLssMC-q4vViZQ8W-Yl2vXwIFKTu6aymm2cp_C78TVWRrfWUD-GrWaniIyhB0ptDQVkmY8kC9mnkMhBmFiS6Xr4hgp7exV08NdTAOwllzrsGqsv2-wqEiJ92L8TjZSRWjuJvNRR5xNusnr0V2OzzvFyQHj7ErCK-DGliuVypXVIdfafcig_7HofKLDVosHbK4j891vwNGuF1Fuu4MiPpkk2PvxWXoqLxZEDpI5nlJXNS1mGZw6JA_FW76Ms"
+            alt="UniFocus Logo" class="brand-logo-img"
+            onerror="this.style.display='none'; document.getElementById('brandFallback').style.display='flex';">
+          <div id="brandFallback" class="brand-fallback" style="display:none;">
+            <span class="material-symbols-outlined filled">school</span>
+            <span>UniFocus</span>
+          </div>
+          <span class="brand-tagline">Student Platform</span>
+        </div>
+
+        <!-- Navigation Links -->
+        <nav class="nav-menu" role="navigation">
+          <a href="#inicio" class="nav-link active" id="navHome">
+            <span class="material-symbols-outlined filled">home</span>
+            <span>Início</span>
+          </a>
+          <a href="#calendario" class="nav-link" id="navCalendar">
+            <span class="material-symbols-outlined">calendar_month</span>
+            <span>Calendário</span>
+          </a>
+          <a href="#notas" class="nav-link" id="navNotes">
+            <span class="material-symbols-outlined">description</span>
+            <span>Notas</span>
+          </a>
+          <a href="#mensagens" class="nav-link" id="navMessages">
+            <span class="material-symbols-outlined">chat_bubble</span>
+            <span>Mensagens</span>
+          </a>
+        </nav>
+
+        <!-- Sidebar Progress Widget -->
+        <div class="sidebar-footer-widget">
+          <div class="footer-widget-header">
+            <span>Meta Diária</span>
+            <span id="sidebarProgressText">0%</span>
+          </div>
+          <div class="progress-track">
+            <div class="progress-fill" id="sidebarProgressFill" style="width: 0%;"></div>
+          </div>
+          <p class="progress-caption">Conclua seus desafios diários</p>
+        </div>
+
+      </div>
+    </aside>
+
+    <!-- Main Workspace Dashboard Bento Grid -->
+    <main class="dashboard-content" role="main">
+
+      <!-- Bento Top Row: Streaks & Resumo de Notas -->
+      <section class="bento-row-top" aria-label="Estatísticas Rápidas">
+
+        <!-- Gamification / Streaks Card -->
+        <article class="neomorphic-card">
+          <div class="card-inner">
+            <div class="card-header-flex">
+              <h2 class="card-title">
+                <span>Streaks</span>
+              </h2>
+              <span class="material-symbols-outlined filled text-orange-500"
+                style="color: var(--streak-fire); font-size: 30px;">local_fire_department</span>
+            </div>
+
+            <div class="streak-items-wrapper">
+              <div class="streak-row">
+                <span class="streak-label">Diária</span>
+                <span class="streak-value-highlight">15 dias</span>
+              </div>
+
+              <div class="streak-row">
+                <span class="streak-label">Com Amigos</span>
+                <div class="friends-avatar-group">
+                  <img class="friend-avatar"
+                    src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=100&auto=format&fit=crop&q=80"
+                    alt="Amigo 1" title="Mariana Costa">
+                  <img class="friend-avatar"
+                    src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=100&auto=format&fit=crop&q=80"
+                    alt="Amigo 2" title="Lucas Silva">
+                  <div class="avatar-badge-plus" title="Mais 2 colegas">+2</div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </article>
+
+        <!-- Grades Overview Card -->
+        <article class="neomorphic-card">
+          <div class="card-inner">
+            <div class="card-header-flex">
+              <h2 class="card-title">Resumo de Notas</h2>
+              <span class="material-symbols-outlined card-header-icon">analytics</span>
+            </div>
+
+            <ul class="grades-list" aria-label="Notas por disciplina">
+              <li class="grade-item" tabindex="0">
+                <div class="subject-info">
+                  <span class="subject-dot" style="background-color: #2196f3;"></span>
+                  <span class="subject-name">Cálculo I</span>
+                </div>
+                <span class="grade-badge">8.5</span>
+              </li>
+
+              <li class="grade-item" tabindex="0">
+                <div class="subject-info">
+                  <span class="subject-dot" style="background-color: #2b5bb5;"></span>
+                  <span class="subject-name">Algoritmos</span>
+                </div>
+                <span class="grade-badge">9.0</span>
+              </li>
+
+              <li class="grade-item" tabindex="0">
+                <div class="subject-info">
+                  <span class="subject-dot" style="background-color: #707883;"></span>
+                  <span class="subject-name">Física Geral</span>
+                </div>
+                <span class="grade-badge neutral">7.2</span>
+              </li>
+            </ul>
+          </div>
+        </article>
+
+      </section>
+
+      <!-- Bento Middle Row: Flashcard Review & Upcoming Activities -->
+      <section class="bento-row-middle" aria-label="Estudos e Atividades">
+
+        <!-- 3D Interactive Flashcard Card (Spans 2 columns) -->
+        <article class="flashcard-container" id="dailyFlashcard" title="Clique para virar o card">
+          <div class="flashcard-inner">
+
+            <!-- Front Face -->
+            <div class="flashcard-face flashcard-front" id="flashcardFront">
+              <span class="flashcard-tag" id="cardTagFront">Flash Card • Revisão Diária</span>
+              <h3 class="flashcard-title" id="cardTitleFront">Estruturas de Dados</h3>
+              <p class="flashcard-description" id="cardDescFront">
+                Conceitos fundamentais de Árvores Binárias de Busca e balanceamento AVL. Toque para virar.
+              </p>
+              <div class="action-btn-click">
+                <button class="btn-primary-action" id="startSessionBtn">
+                  <span class="material-symbols-outlined filled">play_arrow</span>
+                  <span>Iniciar Sessão</span>
+                </button>
+              </div>
+              <span class="flashcard-hint">
+                <span class="material-symbols-outlined" style="font-size: 16px;">touch_app</span> Toque no card para ver
+                a resposta
+              </span>
+            </div>
+
+            <!-- Back Face (Answer) -->
+            <div class="flashcard-face flashcard-back" id="flashcardBack">
+              <span class="flashcard-tag">Resposta • Conceito Chave</span>
+              <h3 class="flashcard-title" id="cardTitleBack">Estruturas de Dados</h3>
+              <p class="flashcard-description" id="cardDescBack">
+                Árvore AVL é uma árvore de busca binária auto-balanceada onde a diferença de altura entre subárvores
+                esquerda e direita não passa de 1 para qualquer nó (Fator de Balanceamento ∈ {-1, 0, 1}).
+              </p>
+              <div class="action-btn-click">
+                <button class="btn-primary-action" id="nextCardBtn" style="background: #ffffff; color: var(--primary);">
+                  <span class="material-symbols-outlined">sync</span>
+                  <span>Próximo Card</span>
+                </button>
+              </div>
+            </div>
+
+          </div>
+        </article>
+
+        <!-- Upcoming Activities Card -->
+        <article class="neomorphic-card">
+          <div class="card-inner">
+            <div class="card-header-flex" style="margin-bottom: var(--spacing-sm);">
+              <h2 class="card-title">
+                <span class="material-symbols-outlined" style="font-size: 24px;">event_upcoming</span>
+                <span>Próximas</span>
+              </h2>
+            </div>
+
+            <div class="timeline-container" aria-label="Cronograma de entregas e provas">
+              <div class="timeline-item">
+                <div class="timeline-dot urgent"></div>
+                <div class="timeline-card urgent-card">
+                  <h4 class="activity-title">Prova de Física</h4>
+                  <p class="activity-due urgent-text">Amanhã • 08:00</p>
+                </div>
+              </div>
+
+              <div class="timeline-item">
+                <div class="timeline-dot"></div>
+                <div class="timeline-card">
+                  <h4 class="activity-title">Trabalho de BD</h4>
+                  <p class="activity-due">Sexta • 23:59</p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </article>
+
+      </section>
+
+      <!-- Bento Bottom Row: Desafios Diários -->
+      <section aria-label="Desafios Diários">
+        <article class="neomorphic-card">
+          <div class="card-inner">
+            <div class="challenges-header">
+              <h2 class="card-title">Desafios Diários</h2>
+              <span class="challenges-counter-badge" id="challengesBadge">0/3 Completos</span>
+            </div>
+
+            <div class="challenges-grid">
+              <label class="challenge-item">
+                <input type="checkbox" class="challenge-checkbox">
+                <div class="challenge-details">
+                  <span class="challenge-title">Faculdade</span>
+                  <span class="challenge-freq">1x/semana</span>
+                </div>
+              </label>
+
+              <label class="challenge-item">
+                <input type="checkbox" class="challenge-checkbox">
+                <div class="challenge-details">
+                  <span class="challenge-title">Calendário</span>
+                  <span class="challenge-freq">1x/dia</span>
+                </div>
+              </label>
+
+              <label class="challenge-item">
+                <input type="checkbox" class="challenge-checkbox">
+                <div class="challenge-details">
+                  <span class="challenge-title">3 Questões IA</span>
+                  <span class="challenge-freq">Revisão assistida</span>
+                </div>
+              </label>
+            </div>
+          </div>
+        </article>
+      </section>
+
+    </main>
+  </div>
+
+  <!-- ==================== Bottom Navigation Bar (Mobile App) ==================== -->
+  <nav class="bottom-nav" role="navigation" aria-label="Menu Mobile">
+    <a href="#inicio" class="bottom-nav-link active" title="Início">
+      <span class="material-symbols-outlined filled">home</span>
+    </a>
+    <a href="#calendario" class="bottom-nav-link" title="Calendário">
+      <span class="material-symbols-outlined">calendar_month</span>
+    </a>
+    <a href="#notas" class="bottom-nav-link" title="Notas">
+      <span class="material-symbols-outlined">description</span>
+    </a>
+    <a href="#ia" class="bottom-nav-link" title="Assistente IA">
+      <span class="material-symbols-outlined">psychology</span>
+    </a>
+  </nav>
+
+  <!-- Application Logic -->
+  <script src="js/main.js"></script>
+</body>
+
+</html>
