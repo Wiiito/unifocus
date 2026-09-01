@@ -420,6 +420,17 @@ button {
   color: var(--primary);
 }
 
+.brand-wordmark {
+  font-size: 1.1rem;
+  font-weight: 800;
+  color: var(--primary);
+  letter-spacing: 0.02em;
+}
+
+[data-theme="dark"] .brand-wordmark {
+  color: #ffffff;
+}
+
 .brand-tagline {
   font-size: 0.72rem;
   font-weight: 600;
