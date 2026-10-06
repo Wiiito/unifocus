@@ -77,32 +77,15 @@ Alpine.store('challenges', {
 });
 
 /**
- * Flashcard 3D da revisão diária (baralho mockado no front).
+ * Flashcard 3D da revisão diária. O baralho vem do servidor (questões
+ * aprovadas das matérias que o estudante está cursando).
+ *
+ * @param {Array<{topic: string, tag: string, question: string, answer: string}>} deck
  */
-Alpine.data('flashcard', () => ({
+Alpine.data('flashcard', (deck = []) => ({
     index: 0,
     flipped: false,
-
-    deck: [
-        {
-            topic: 'Estruturas de Dados',
-            tag: 'Flash Card • Revisão Diária',
-            question: 'Conceitos fundamentais de Árvores Binárias de Busca e balanceamento AVL. Toque para virar.',
-            answer: 'Árvore AVL é uma árvore de busca binária auto-balanceada onde a diferença de altura entre subárvores esquerda e direita não passa de 1 para qualquer nó (Fator de Balanceamento ∈ {-1, 0, 1}).',
-        },
-        {
-            topic: 'Cálculo I',
-            tag: 'Flash Card • Limites & Derivadas',
-            question: 'Qual é a definição da Regra da Cadeia para diferenciação de funções compostas?',
-            answer: "Se f e g são deriváveis, a derivada da função composta (f ∘ g)(x) é dada por: (f ∘ g)'(x) = f'(g(x)) · g'(x).",
-        },
-        {
-            topic: 'Banco de Dados',
-            tag: 'Flash Card • Modelagem Relacional',
-            question: 'Qual a diferença entre a Primeira (1FN) e a Segunda Forma Normal (2FN)?',
-            answer: 'Na 1FN todos os atributos são atômicos. Na 2FN, além de estar na 1FN, nenhum atributo não-chave depende parcialmente de uma chave candidata composta.',
-        },
-    ],
+    deck,
 
     get card() {
         return this.deck[this.index];

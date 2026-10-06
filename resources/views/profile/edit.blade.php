@@ -14,6 +14,12 @@
 
         <x-ui.card>
             <div class="max-w-xl">
+                @include('profile.partials.institutions')
+            </div>
+        </x-ui.card>
+
+        <x-ui.card>
+            <div class="max-w-xl">
                 @include('profile.partials.update-password-form')
             </div>
         </x-ui.card>

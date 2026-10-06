@@ -17,8 +17,22 @@
                 {{ __('Início') }}
             </x-ui.sidebar-link>
 
-            <x-ui.sidebar-link href="#calendario" icon="calendar_month">{{ __('Calendário') }}</x-ui.sidebar-link>
-            <x-ui.sidebar-link href="#notas" icon="description">{{ __('Notas') }}</x-ui.sidebar-link>
+            <x-ui.sidebar-link :href="route('enrollments.index')" icon="menu_book" :active="request()->routeIs('enrollments.*')">
+                {{ __('Matérias') }}
+            </x-ui.sidebar-link>
+
+            <x-ui.sidebar-link :href="route('agenda')" icon="calendar_month" :active="request()->routeIs('agenda')">
+                {{ __('Agenda') }}
+            </x-ui.sidebar-link>
+
+            <x-ui.sidebar-link :href="route('report-card')" icon="description" :active="request()->routeIs('report-card')">
+                {{ __('Boletim') }}
+            </x-ui.sidebar-link>
+
+            <x-ui.sidebar-link :href="route('practice.show')" icon="psychology" :active="request()->routeIs('practice.*')">
+                {{ __('Praticar') }}
+            </x-ui.sidebar-link>
+
             <x-ui.sidebar-link href="#mensagens" icon="chat_bubble">{{ __('Mensagens') }}</x-ui.sidebar-link>
         </nav>
 

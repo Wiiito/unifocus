@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\ProfileUpdateRequest;
+use App\Models\Institution;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -16,8 +17,15 @@ class ProfileController extends Controller
      */
     public function edit(Request $request): View
     {
+        $user = $request->user();
+
         return view('profile.edit', [
-            'user' => $request->user(),
+            'user' => $user,
+            'memberships' => $user->memberships()->with('institution')->get(),
+            'institutions' => Institution::query()
+                ->whereNotIn('id', $user->memberships()->select('institution_id'))
+                ->orderBy('name')
+                ->get(['id', 'name']),
         ]);
     }
 

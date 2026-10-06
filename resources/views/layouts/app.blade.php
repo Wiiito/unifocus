@@ -40,6 +40,8 @@
                 </header>
             @endisset
 
+            <x-ui.flash />
+
             {{ $slot }}
         </main>
     </div>

@@ -7,6 +7,7 @@
         'tertiary' => 'bg-tertiary-container text-white',
         'streak' => 'border border-streak-border bg-streak-bg text-streak',
         'success' => 'bg-emerald-500 text-white',
+        'danger' => 'bg-error-container text-on-error-container',
     ];
 @endphp
 

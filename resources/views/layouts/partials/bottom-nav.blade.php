@@ -6,7 +6,19 @@
         {{ __('Início') }}
     </x-ui.bottom-nav-link>
 
-    <x-ui.bottom-nav-link href="#calendario" icon="calendar_month">{{ __('Calendário') }}</x-ui.bottom-nav-link>
-    <x-ui.bottom-nav-link href="#notas" icon="description">{{ __('Notas') }}</x-ui.bottom-nav-link>
-    <x-ui.bottom-nav-link href="#ia" icon="psychology">{{ __('IA') }}</x-ui.bottom-nav-link>
+    <x-ui.bottom-nav-link :href="route('enrollments.index')" icon="menu_book" :active="request()->routeIs('enrollments.*')">
+        {{ __('Matérias') }}
+    </x-ui.bottom-nav-link>
+
+    <x-ui.bottom-nav-link :href="route('agenda')" icon="calendar_month" :active="request()->routeIs('agenda')">
+        {{ __('Agenda') }}
+    </x-ui.bottom-nav-link>
+
+    <x-ui.bottom-nav-link :href="route('report-card')" icon="description" :active="request()->routeIs('report-card')">
+        {{ __('Boletim') }}
+    </x-ui.bottom-nav-link>
+
+    <x-ui.bottom-nav-link :href="route('practice.show')" icon="psychology" :active="request()->routeIs('practice.*')">
+        {{ __('Praticar') }}
+    </x-ui.bottom-nav-link>
 </nav>
