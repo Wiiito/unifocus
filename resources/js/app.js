@@ -30,53 +30,6 @@ Alpine.store('theme', {
 });
 
 /**
- * Desafios diários (dados mockados no front).
- *
- * Fica num store porque duas telas leem o mesmo estado: o card de desafios no
- * dashboard e o widget "Meta Diária" da sidebar.
- */
-Alpine.store('challenges', {
-    items: [
-        { title: 'Faculdade', frequency: '1x/semana', done: false },
-        { title: 'Calendário', frequency: '1x/dia', done: false },
-        { title: '3 Questões IA', frequency: 'Revisão assistida', done: false },
-    ],
-
-    init() {
-        try {
-            const saved = JSON.parse(localStorage.getItem('unifocus_challenges') || '[]');
-            this.items.forEach((item, index) => (item.done = Boolean(saved[index])));
-        } catch {
-            // Sem estado salvo: começa com todos os desafios em aberto.
-        }
-    },
-
-    get total() {
-        return this.items.length;
-    },
-
-    get completed() {
-        return this.items.filter((item) => item.done).length;
-    },
-
-    get percentage() {
-        return this.total === 0 ? 0 : Math.round((this.completed / this.total) * 100);
-    },
-
-    get allDone() {
-        return this.total > 0 && this.completed === this.total;
-    },
-
-    persist() {
-        try {
-            localStorage.setItem('unifocus_challenges', JSON.stringify(this.items.map((item) => item.done)));
-        } catch {
-            // Sem persistência disponível: o progresso vale só para esta sessão.
-        }
-    },
-});
-
-/**
  * Flashcard 3D da revisão diária. O baralho vem do servidor (questões
  * aprovadas das matérias que o estudante está cursando).
  *

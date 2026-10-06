@@ -2,9 +2,12 @@
 
 namespace App\Models;
 
+use App\Contracts\AffectsDailyChallenges;
 use App\Contracts\AffectsEnrollmentStanding;
 use App\Enums\LessonStatus;
+use App\Observers\DailyChallengeObserver;
 use App\Observers\EnrollmentStandingObserver;
+use Carbon\CarbonInterface;
 use Database\Factories\LessonFactory;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Attributes\ObservedBy;
@@ -21,8 +24,8 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  * contagem de faltas (aula dupla = 2).
  */
 #[Fillable(['class_group_id', 'created_by_user_id', 'title', 'topic', 'description', 'starts_at', 'ends_at', 'class_count', 'status'])]
-#[ObservedBy(EnrollmentStandingObserver::class)]
-class Lesson extends Model implements AffectsEnrollmentStanding
+#[ObservedBy([EnrollmentStandingObserver::class, DailyChallengeObserver::class])]
+class Lesson extends Model implements AffectsDailyChallenges, AffectsEnrollmentStanding
 {
     /** @use HasFactory<LessonFactory> */
     use HasFactory, SoftDeletes;
@@ -71,5 +74,23 @@ class Lesson extends Model implements AffectsEnrollmentStanding
     public function enrollmentsToRecalculate(): iterable
     {
         return $this->classGroup->enrollments()->get();
+    }
+
+    /**
+     * Mudar data, situação ou excluir a aula afeta o dia antigo e o novo de
+     * quem tem presença registrada nela.
+     *
+     * @return iterable<int, array{user: User, day: CarbonInterface}>
+     */
+    public function dailyChallengeDays(): iterable
+    {
+        $days = array_filter([$this->starts_at, $this->getOriginal('starts_at')]);
+
+        return $this->attendances()->with('enrollment.user')->get()
+            ->flatMap(fn (LessonAttendance $attendance) => array_map(
+                fn ($day) => ['user' => $attendance->enrollment->user, 'day' => $day],
+                $days,
+            ))
+            ->all();
     }
 }

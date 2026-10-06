@@ -30,6 +30,16 @@ enum AttendanceStatus: string
      * Só a falta sem justificativa entra na conta do limite de faltas; o
      * atraso conta como presença.
      */
+    /**
+     * Estados que contam como "foi à aula" (desafio diário).
+     *
+     * @return array<int, self>
+     */
+    public static function presences(): array
+    {
+        return [self::Present, self::Late];
+    }
+
     public function countsAsAbsence(): bool
     {
         return $this === self::Absent;

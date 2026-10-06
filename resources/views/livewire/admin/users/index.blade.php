@@ -9,6 +9,7 @@
             <th class="px-4 py-3">{{ __('Instituições') }}</th>
             <th class="px-4 py-3">{{ __('Matérias em andamento') }}</th>
             <th class="px-4 py-3">{{ __('Questões respondidas') }}</th>
+            <th class="px-4 py-3">{{ __('Foguinho') }}</th>
             <th class="px-4 py-3">{{ __('Cadastro') }}</th>
         </x-slot:head>
 
@@ -21,11 +22,12 @@
                 <td class="px-4 py-3 text-on-surface-variant">{{ $user->institutions->pluck('name')->join(', ') ?: '—' }}</td>
                 <td class="px-4 py-3 font-mono text-on-surface-variant">{{ $user->ongoing_enrollments_count }}</td>
                 <td class="px-4 py-3 font-mono text-on-surface-variant">{{ $user->question_attempts_count }}</td>
+                <td class="px-4 py-3"><x-streak.flame :count="$user->streak?->activeCount() ?? 0" /></td>
                 <td class="px-4 py-3 font-mono text-on-surface-variant">{{ $user->created_at->format('d/m/Y') }}</td>
             </tr>
         @empty
             <tr>
-                <td colspan="5" class="px-4 py-10 text-center text-on-surface-variant">{{ __('Nenhum estudante encontrado.') }}</td>
+                <td colspan="6" class="px-4 py-10 text-center text-on-surface-variant">{{ __('Nenhum estudante encontrado.') }}</td>
             </tr>
         @endforelse
     </x-admin.table>

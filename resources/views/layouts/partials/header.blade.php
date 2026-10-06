@@ -21,13 +21,13 @@
     </div>
 
     <div class="flex shrink-0 items-center gap-sm">
-        {{-- Ofensiva de estudo (dado mockado) --}}
-        <button type="button" aria-label="{{ __('Ofensiva de 15 dias de estudo') }}"
-            class="inline-flex items-center gap-1.5 rounded-full border border-streak-border bg-streak-bg px-3.5 py-1.5
-                   transition duration-bounce ease-bounce active:scale-95">
-            <span class="font-mono text-[0.95rem] font-bold text-streak">15</span>
-            <x-ui.icon name="local_fire_department" filled size="text-[22px]" class="animate-flame-pulse text-streak" />
-        </button>
+        {{-- Foguinho: leva aos desafios do dia --}}
+        @isset($dailyBoard)
+            <a href="{{ route('dashboard') }}#desafios" class="transition duration-bounce ease-bounce active:scale-95"
+                aria-label="{{ trans_choice('{0} Foguinho apagado|{1} :count dia de foguinho|[2,*] :count dias de foguinho', $dailyBoard->streakCount()) }}">
+                <x-streak.flame :count="$dailyBoard->streakCount()" />
+            </a>
+        @endisset
 
         {{-- Alternador de tema --}}
         <button type="button" x-data @click="$store.theme.toggle()"

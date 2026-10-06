@@ -2,10 +2,13 @@
 
 namespace App\Models;
 
+use App\Contracts\AffectsDailyChallenges;
 use App\Contracts\AffectsEnrollmentStanding;
 use App\Enums\AttendanceStatus;
 use App\Models\Concerns\Auditable;
+use App\Observers\DailyChallengeObserver;
 use App\Observers\EnrollmentStandingObserver;
+use Carbon\CarbonInterface;
 use Database\Factories\LessonAttendanceFactory;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Attributes\ObservedBy;
@@ -17,8 +20,8 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
  * Presença de uma matrícula em uma aula, com quem lançou.
  */
 #[Fillable(['lesson_id', 'enrollment_id', 'status', 'justification', 'recorded_by_user_id', 'recorded_at'])]
-#[ObservedBy(EnrollmentStandingObserver::class)]
-class LessonAttendance extends Model implements AffectsEnrollmentStanding
+#[ObservedBy([EnrollmentStandingObserver::class, DailyChallengeObserver::class])]
+class LessonAttendance extends Model implements AffectsDailyChallenges, AffectsEnrollmentStanding
 {
     /** @use HasFactory<LessonAttendanceFactory> */
     use Auditable, HasFactory;
@@ -56,5 +59,18 @@ class LessonAttendance extends Model implements AffectsEnrollmentStanding
     public function enrollmentsToRecalculate(): iterable
     {
         return [$this->enrollment];
+    }
+
+    /**
+     * O dia que conta é o da aula, não o do lançamento.
+     *
+     * @return iterable<int, array{user: User, day: CarbonInterface}>
+     */
+    public function dailyChallengeDays(): iterable
+    {
+        $lesson = $this->lesson()->withTrashed()->first();
+        $user = $this->enrollment?->user;
+
+        return $lesson && $user ? [['user' => $user, 'day' => $lesson->starts_at]] : [];
     }
 }

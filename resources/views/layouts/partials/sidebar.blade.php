@@ -36,21 +36,21 @@
             <x-ui.sidebar-link href="#mensagens" icon="chat_bubble">{{ __('Mensagens') }}</x-ui.sidebar-link>
         </nav>
 
-        {{-- Meta diária: espelha os desafios do dashboard pelo store compartilhado --}}
-        <div x-data class="mt-auto rounded-md border border-surface-variant bg-surface-container-low p-sm">
-            <div class="mb-1.5 flex items-center justify-between text-xs font-bold uppercase tracking-wider text-on-surface-variant">
-                <span>{{ __('Meta Diária') }}</span>
-                <span x-text="`${$store.challenges.percentage}%`">0%</span>
-            </div>
+        {{-- Meta diária: mesmo quadro do dashboard (StreakService) --}}
+        @isset($dailyBoard)
+            <a href="{{ route('dashboard') }}#desafios" class="mt-auto block rounded-md border border-surface-variant bg-surface-container-low p-sm transition duration-fast hover:bg-surface-container">
+                <div class="mb-1.5 flex items-center justify-between text-xs font-bold uppercase tracking-wider text-on-surface-variant">
+                    <span>{{ __('Meta Diária') }}</span>
+                    <span>{{ $dailyBoard->percentage() }}%</span>
+                </div>
 
-            <div class="mb-1.5 h-1.5 w-full overflow-hidden rounded-full bg-surface-variant"
-                role="progressbar" aria-valuemin="0" aria-valuemax="100"
-                :aria-valuenow="$store.challenges.percentage">
-                <div class="h-full rounded-full bg-gradient-to-r from-primary-container to-primary transition-[width] duration-700 ease-normal"
-                    :style="`width: ${$store.challenges.percentage}%`"></div>
-            </div>
+                <x-ui.progress class="mb-1.5 !h-1.5" :value="$dailyBoard->percentage()"
+                    :variant="$dailyBoard->isComplete() ? 'success' : 'primary'" :label="__('Meta Diária')" />
 
-            <p class="text-xs text-on-surface-variant">{{ __('Conclua seus desafios diários') }}</p>
-        </div>
+                <p class="text-xs text-on-surface-variant">
+                    {{ $dailyBoard->isComplete() ? __('Foguinho garantido hoje!') : __('Conclua seus desafios diários') }}
+                </p>
+            </a>
+        @endisset
     </x-ui.card>
 </aside>

@@ -38,7 +38,7 @@ class Index extends Component
     public function users(): LengthAwarePaginator
     {
         return User::query()
-            ->with('institutions:id,name')
+            ->with(['institutions:id,name', 'streak'])
             ->withCount([
                 'enrollments as ongoing_enrollments_count' => fn (Builder $query) => $query->ongoing(),
                 'questionAttempts',
