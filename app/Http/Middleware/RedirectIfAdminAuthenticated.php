@@ -20,7 +20,7 @@ class RedirectIfAdminAuthenticated
     public function handle(Request $request, Closure $next): Response
     {
         if (Auth::guard('admin')->check()) {
-            return redirect()->route('admin.subjects.index');
+            return redirect()->route('admin.dashboard');
         }
 
         return $next($request);

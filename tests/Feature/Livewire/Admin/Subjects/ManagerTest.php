@@ -28,10 +28,10 @@ class ManagerTest extends TestCase
 
         Livewire::actingAs($admin, 'admin')
             ->test(Manager::class)
-            ->set('name', 'Álgebra Linear')
-            ->set('code', 'MAT201')
-            ->set('credits', 4)
-            ->set('workloadHours', 60)
+            ->set('form.name', 'Álgebra Linear')
+            ->set('form.code', 'MAT201')
+            ->set('form.credits', 4)
+            ->set('form.workloadHours', 60)
             ->call('save')
             ->assertHasNoErrors();
 
@@ -49,9 +49,9 @@ class ManagerTest extends TestCase
 
         Livewire::actingAs($admin, 'admin')
             ->test(Manager::class)
-            ->set('name', '')
+            ->set('form.name', '')
             ->call('save')
-            ->assertHasErrors(['name' => 'required']);
+            ->assertHasErrors(['form.name' => 'required']);
 
         $this->assertSame(0, Subject::count());
     }
@@ -63,10 +63,10 @@ class ManagerTest extends TestCase
 
         Livewire::actingAs($admin, 'admin')
             ->test(Manager::class)
-            ->set('name', 'Outra Matéria')
-            ->set('code', 'MAT101')
+            ->set('form.name', 'Outra Matéria')
+            ->set('form.code', 'MAT101')
             ->call('save')
-            ->assertHasErrors(['code' => 'unique']);
+            ->assertHasErrors(['form.code' => 'unique']);
     }
 
     public function test_admin_can_update_a_subject(): void
@@ -77,7 +77,7 @@ class ManagerTest extends TestCase
         Livewire::actingAs($admin, 'admin')
             ->test(Manager::class)
             ->call('openEditForm', $subject->id)
-            ->set('name', 'Nome Atualizado')
+            ->set('form.name', 'Nome Atualizado')
             ->call('save')
             ->assertHasNoErrors();
 
@@ -92,7 +92,7 @@ class ManagerTest extends TestCase
         Livewire::actingAs($admin, 'admin')
             ->test(Manager::class)
             ->call('openEditForm', $subject->id)
-            ->set('name', 'Nome Atualizado')
+            ->set('form.name', 'Nome Atualizado')
             ->call('save')
             ->assertHasNoErrors();
     }
@@ -104,7 +104,7 @@ class ManagerTest extends TestCase
 
         Livewire::actingAs($admin, 'admin')
             ->test(Manager::class)
-            ->call('deleteSubject', $subject->id);
+            ->call('delete', $subject->id);
 
         $this->assertSoftDeleted($subject);
     }

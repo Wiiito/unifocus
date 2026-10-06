@@ -32,9 +32,20 @@
 </head>
 
 <body class="min-h-screen">
-    <header class="border-b border-card-border bg-header">
-        <div class="mx-auto flex max-w-[1100px] items-center justify-between gap-sm px-gutter py-sm md:px-md">
-            <div class="flex items-center gap-sm">
+    @php
+        $navigation = [
+            ['route' => 'admin.dashboard', 'icon' => 'monitoring', 'label' => __('Visão geral')],
+            ['route' => 'admin.institutions.index', 'icon' => 'account_balance', 'label' => __('Instituições')],
+            ['route' => 'admin.academic-terms.index', 'icon' => 'date_range', 'label' => __('Períodos letivos')],
+            ['route' => 'admin.subjects.index', 'icon' => 'menu_book', 'label' => __('Matérias')],
+            ['route' => 'admin.questions.index', 'icon' => 'quiz', 'label' => __('Banco de questões')],
+            ['route' => 'admin.users.index', 'icon' => 'group', 'label' => __('Estudantes')],
+        ];
+    @endphp
+
+    <header class="sticky top-0 z-40 border-b border-glass bg-header backdrop-blur-lg">
+        <div class="mx-auto flex max-w-[1320px] items-center justify-between gap-sm px-gutter py-sm md:px-md">
+            <a href="{{ route('admin.dashboard') }}" class="flex items-center gap-sm">
                 <x-application-logo class="w-[36px]" />
                 <div class="flex flex-col leading-tight">
                     <span class="text-base font-extrabold tracking-wide text-primary dark:text-white">UniFocus</span>
@@ -42,7 +53,7 @@
                         {{ __('Painel administrativo') }}
                     </span>
                 </div>
-            </div>
+            </a>
 
             <div class="flex items-center gap-sm">
                 <span class="hidden text-sm text-on-surface-variant sm:inline">
@@ -57,11 +68,37 @@
                 </form>
             </div>
         </div>
+
+        {{-- Navegação mobile: rolagem horizontal abaixo do cabeçalho. --}}
+        <nav class="flex gap-1.5 overflow-x-auto px-gutter pb-sm md:hidden" aria-label="{{ __('Navegação do painel') }}">
+            @foreach ($navigation as $item)
+                <a href="{{ route($item['route']) }}" @class([
+                    'flex shrink-0 items-center gap-1.5 rounded-full px-3 py-1.5 text-sm font-semibold',
+                    'bg-primary-container text-on-primary-container' => request()->routeIs($item['route']),
+                    'bg-surface-container-low text-on-surface-variant' => ! request()->routeIs($item['route']),
+                ])>
+                    <x-ui.icon :name="$item['icon']" size="text-lg" />
+                    {{ $item['label'] }}
+                </a>
+            @endforeach
+        </nav>
     </header>
 
-    <main class="mx-auto flex w-full max-w-[1100px] flex-col gap-md px-gutter py-lg md:px-md">
-        {{ $slot }}
-    </main>
+    <div class="mx-auto grid w-full max-w-[1320px] grid-cols-1 gap-md px-gutter py-lg md:grid-cols-[230px_1fr] md:px-md">
+        <aside class="sticky top-[96px] hidden h-fit md:block" aria-label="{{ __('Navegação do painel') }}">
+            <x-ui.card as="nav" :inner="false" class="flex flex-col gap-1.5 p-sm">
+                @foreach ($navigation as $item)
+                    <x-ui.sidebar-link :href="route($item['route'])" :icon="$item['icon']" :active="request()->routeIs($item['route'])">
+                        {{ $item['label'] }}
+                    </x-ui.sidebar-link>
+                @endforeach
+            </x-ui.card>
+        </aside>
+
+        <main class="flex min-w-0 flex-col gap-md">
+            {{ $slot }}
+        </main>
+    </div>
 
     @livewireScripts
 </body>

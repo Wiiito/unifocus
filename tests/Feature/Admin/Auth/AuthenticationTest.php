@@ -28,7 +28,7 @@ class AuthenticationTest extends TestCase
 
         $this->assertGuest();
         $this->assertAuthenticated('admin');
-        $response->assertRedirect(route('admin.subjects.index', absolute: false));
+        $response->assertRedirect(route('admin.dashboard', absolute: false));
     }
 
     public function test_admins_can_not_authenticate_with_invalid_password(): void

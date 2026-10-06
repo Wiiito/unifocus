@@ -5,6 +5,7 @@ namespace Tests\Feature\Admin;
 use App\Models\Admin;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use PHPUnit\Framework\Attributes\DataProvider;
 use Tests\TestCase;
 
 class AdminAccessTest extends TestCase
@@ -43,6 +44,33 @@ class AdminAccessTest extends TestCase
 
         $response = $this->actingAs($admin, 'admin')->get('/staff/login');
 
-        $response->assertRedirect(route('admin.subjects.index'));
+        $response->assertRedirect(route('admin.dashboard'));
+    }
+
+    /**
+     * @return array<string, array{0: string}>
+     */
+    public static function adminPages(): array
+    {
+        return [
+            'dashboard' => ['/staff'],
+            'institutions' => ['/staff/institutions'],
+            'academic terms' => ['/staff/academic-terms'],
+            'subjects' => ['/staff/subjects'],
+            'questions' => ['/staff/questions'],
+            'users' => ['/staff/users'],
+        ];
+    }
+
+    #[DataProvider('adminPages')]
+    public function test_student_receives_404_for_every_admin_page(string $uri): void
+    {
+        $this->actingAs(User::factory()->create())->get($uri)->assertNotFound();
+    }
+
+    #[DataProvider('adminPages')]
+    public function test_admin_can_view_every_admin_page(string $uri): void
+    {
+        $this->actingAs(Admin::factory()->create(), 'admin')->get($uri)->assertOk();
     }
 }

@@ -20,7 +20,11 @@ Route::prefix('staff')->name('admin.')->group(function () {
         Route::post('logout', [AuthenticatedSessionController::class, 'destroy'])
             ->name('logout');
 
-        Route::livewire('subjects', 'admin.subjects.manager')
-            ->name('subjects.index');
+        Route::livewire('/', 'admin.dashboard')->name('dashboard');
+        Route::livewire('institutions', 'admin.institutions.manager')->name('institutions.index');
+        Route::livewire('academic-terms', 'admin.academic-terms.manager')->name('academic-terms.index');
+        Route::livewire('subjects', 'admin.subjects.manager')->name('subjects.index');
+        Route::livewire('questions', 'admin.questions.manager')->name('questions.index');
+        Route::livewire('users', 'admin.users.index')->name('users.index');
     });
 });
