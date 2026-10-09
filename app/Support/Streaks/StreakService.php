@@ -64,14 +64,16 @@ class StreakService
         $progress->attended_lessons = $this->attendedLessons($user, $start, $end);
         $progress->questions_answered = $user->questionAttempts()->whereBetween('answered_at', [$start, $end])->count();
 
-        $wasCompleted = $progress->completed_at !== null;
         $isCompleted = $progress->meetsAllChallenges();
         $progress->completed_at = $isCompleted ? ($progress->completed_at ?? now()) : null;
         $progress->save();
 
-        if ($wasCompleted !== $isCompleted) {
-            $this->recalculateStreak($user);
-        }
+        /**
+         * Recalcula sempre (uma consulta), e não só quando o dia muda de
+         * estado: assim o foguinho se corrige sozinho se dias forem
+         * alterados fora da aplicação.
+         */
+        $this->rebuildStreak($user);
 
         unset($this->boards[$user->id]);
     }
@@ -79,9 +81,10 @@ class StreakService
     /**
      * Sequência atual = dias cumpridos consecutivos terminando no último dia
      * cumprido; recorde = maior sequência já feita. Recalculado dos dias
-     * gravados, então funciona igual para registros retroativos.
+     * gravados, então funciona igual para registros retroativos e serve para
+     * reparar o foguinho depois de correções manuais no banco.
      */
-    private function recalculateStreak(User $user): void
+    public function rebuildStreak(User $user): void
     {
         /** @var Collection<int, Carbon> $days */
         $days = $user->dailyChallengeProgress()
@@ -108,6 +111,7 @@ class StreakService
         ]);
 
         $user->setRelation('streak', $streak);
+        unset($this->boards[$user->id]);
     }
 
     private function attendedLessons(User $user, CarbonInterface $start, CarbonInterface $end): int

@@ -44,7 +44,7 @@ class StreakTest extends TestCase
         $this->assertNotNull($progress->viewed_agenda_at);
         $this->assertSame(3, $progress->questions_answered);
         $this->assertNotNull($progress->completed_at);
-        $this->assertSame(1, $user->streak->activeCount());
+        $this->assertSame(1, $user->fresh()->streak->activeCount());
     }
 
     public function test_a_partially_completed_day_does_not_count(): void
@@ -57,7 +57,7 @@ class StreakTest extends TestCase
         app(StreakService::class)->recordAgendaView($user);
 
         $this->assertNull($user->dailyChallengeProgress()->sole()->completed_at);
-        $this->assertNull($user->streak);
+        $this->assertSame(0, $user->fresh()->streak->activeCount());
     }
 
     public function test_consecutive_days_build_the_streak_and_a_missed_day_puts_it_out(): void
@@ -124,6 +124,21 @@ class StreakTest extends TestCase
         $streak = $user->fresh()->streak;
         $this->assertSame('2026-10-05', $streak->last_completed_on->toDateString());
         $this->assertSame(1, $streak->activeCount());
+    }
+
+    public function test_streak_heals_itself_when_a_completed_day_is_removed_outside_the_app(): void
+    {
+        [$user, $enrollment] = $this->student();
+        $this->completeDay($user, $enrollment, Carbon::parse('2026-10-05'));
+        $this->completeDay($user, $enrollment, Carbon::parse('2026-10-06'));
+        $this->assertSame(2, $user->fresh()->streak->activeCount());
+
+        $user->dailyChallengeProgress()->whereDate('day', '2026-10-06')->delete();
+        app(StreakService::class)->refreshDay($user, Carbon::parse('2026-10-05'));
+
+        $streak = $user->fresh()->streak;
+        $this->assertSame(1, $streak->activeCount());
+        $this->assertSame('2026-10-05', $streak->last_completed_on->toDateString());
     }
 
     public function test_visiting_the_agenda_twice_keeps_the_first_visit(): void
