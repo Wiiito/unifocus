@@ -4,6 +4,7 @@ namespace App\Livewire\Admin\Questions;
 
 use App\Contracts\QuestionGenerator;
 use App\Enums\ReviewStatus;
+use App\Jobs\GenerateQuestions;
 use App\Livewire\Admin\Concerns\ManagesResourceForm;
 use App\Livewire\Admin\Forms\QuestionForm;
 use App\Models\Question;
@@ -13,6 +14,7 @@ use Illuminate\Contracts\View\View;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Collection;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Validation\Rule;
 use Livewire\Attributes\Computed;
 use Livewire\Attributes\Layout;
@@ -69,6 +71,31 @@ class Manager extends Component
         Question::findOrFail($id)->update(['review_status' => $status]);
 
         $this->flashMessage = __('Moderação atualizada.');
+    }
+
+    /**
+     * Pede 5 questões da matéria filtrada na listagem. Entram como pendentes:
+     * a revisão é pela própria lista (aprovar/rejeitar).
+     */
+    public function generateWithAi(QuestionGenerator $generator): void
+    {
+        if (! $generator->isAvailable()) {
+            $this->flashMessage = __('A geração por IA ainda não está disponível.');
+
+            return;
+        }
+
+        $subject = ctype_digit($this->subject) ? Subject::find((int) $this->subject) : null;
+
+        if ($subject === null) {
+            $this->flashMessage = __('Filtre por uma matéria para gerar questões com IA.');
+
+            return;
+        }
+
+        GenerateQuestions::dispatch($subject, Auth::guard('admin')->user());
+
+        $this->flashMessage = __('Geração iniciada. As questões chegam como pendentes de revisão.');
     }
 
     /**

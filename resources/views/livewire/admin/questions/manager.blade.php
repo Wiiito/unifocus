@@ -12,8 +12,8 @@
 <div class="flex flex-col gap-md">
     <x-ui.page-header :title="__('Banco de questões')" :description="__('Questões reutilizáveis usadas na prática e nos flashcards dos estudantes. Só as aprovadas aparecem para eles.')">
         <x-slot:actions>
-            <x-ui.button type="button" variant="secondary" disabled
-                :title="$canGenerateWithAi ? __('Gerar com IA') : __('A geração por IA ainda não está disponível')">
+            <x-ui.button type="button" variant="secondary" wire:click="generateWithAi" :disabled="! $canGenerateWithAi"
+                :title="$canGenerateWithAi ? __('Gera 5 questões da matéria filtrada, pendentes de revisão') : __('A geração por IA ainda não está disponível')">
                 <x-ui.icon name="auto_awesome" size="text-xl" />
                 {{ __('Gerar com IA') }}
             </x-ui.button>
