@@ -91,6 +91,24 @@ services:
     networks:
       - unifocus
 
+  # ---------------------------------------------------------------------------
+  # Cloudflare Tunnel — expõe o nginx na internet.
+  # Sem CLOUDFLARE_TUNNEL_TOKEN: quick tunnel (URL aleatória *.trycloudflare.com,
+  # veja `docker compose logs cloudflared`). Com o token: túnel nomeado do painel.
+  # ---------------------------------------------------------------------------
+  cloudflared:
+    image: cloudflare/cloudflared:2025.11.1
+    container_name: unifocus_cloudflared
+    restart: unless-stopped
+    command: >-
+      tunnel --no-autoupdate --protocol http2
+      ${CLOUDFLARE_TUNNEL_TOKEN:+run --token ${CLOUDFLARE_TUNNEL_TOKEN}}
+      ${CLOUDFLARE_TUNNEL_TOKEN:---url http://nginx:80}
+    depends_on:
+      - nginx
+    networks:
+      - unifocus
+
 networks:
   unifocus:
     name: unifocus
