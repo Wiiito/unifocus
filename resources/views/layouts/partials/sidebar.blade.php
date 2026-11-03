@@ -33,7 +33,11 @@
                 {{ __('Praticar') }}
             </x-ui.sidebar-link>
 
-            <x-ui.sidebar-link href="#mensagens" icon="chat_bubble">{{ __('Mensagens') }}</x-ui.sidebar-link>
+            <x-ui.sidebar-link :href="route('friends.index')" icon="group" :active="request()->routeIs('friends.*')">
+                {{ __('Amigos') }}
+            </x-ui.sidebar-link>
+
+            <x-ui.sidebar-link :href="route('messages.index')" icon="chat_bubble" :active="request()->routeIs('messages.*')">{{ __('Mensagens') }}</x-ui.sidebar-link>
         </nav>
 
         {{-- Meta diária: mesmo quadro do dashboard (StreakService) --}}

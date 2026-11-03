@@ -8,6 +8,7 @@ use App\Models\Concerns\HasOauthIdentities;
 use Database\Factories\UserFactory;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Attributes\Hidden;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
@@ -84,6 +85,39 @@ class User extends Authenticatable
     public function streak(): HasOne
     {
         return $this->hasOne(UserStreak::class);
+    }
+
+    /**
+     * Amigos (amizades aceitas, em qualquer direção). Carregue with('streak')
+     * ao listar, para o foguinho de cada um.
+     *
+     * @return Builder<User>
+     */
+    public function friends(): Builder
+    {
+        return static::query()->where(fn (Builder $query) => $query
+            ->whereIn('id', Friendship::query()->accepted()->where('requester_id', $this->id)->select('addressee_id'))
+            ->orWhereIn('id', Friendship::query()->accepted()->where('addressee_id', $this->id)->select('requester_id')));
+    }
+
+    /**
+     * Pedidos que a pessoa recebeu e ainda não respondeu.
+     *
+     * @return HasMany<Friendship, $this>
+     */
+    public function receivedFriendRequests(): HasMany
+    {
+        return $this->hasMany(Friendship::class, 'addressee_id')->pending();
+    }
+
+    /**
+     * Pedidos que a pessoa enviou e aguardam resposta.
+     *
+     * @return HasMany<Friendship, $this>
+     */
+    public function sentFriendRequests(): HasMany
+    {
+        return $this->hasMany(Friendship::class, 'requester_id')->pending();
     }
 
     /**

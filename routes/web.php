@@ -6,7 +6,9 @@ use App\Http\Controllers\EnrollmentController;
 use App\Http\Controllers\Enrollments\ActivityController;
 use App\Http\Controllers\Enrollments\GradeEntryController;
 use App\Http\Controllers\Enrollments\LessonController;
+use App\Http\Controllers\FriendshipController;
 use App\Http\Controllers\InstitutionMembershipController;
+use App\Http\Controllers\MessageController;
 use App\Http\Controllers\PracticeController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\ReportCardController;
@@ -38,6 +40,18 @@ Route::middleware(['auth', 'verified'])->group(function () {
 
     Route::get('/practice', [PracticeController::class, 'show'])->name('practice.show');
     Route::post('/practice/{question}', [PracticeController::class, 'store'])->name('practice.store');
+
+    Route::resource('friends', FriendshipController::class)
+        ->only(['index', 'store', 'update', 'destroy'])
+        ->parameters(['friends' => 'friendship'])
+        ->whereNumber('friendship');
+
+    Route::controller(MessageController::class)->prefix('messages')->name('messages.')->whereNumber('friend')->group(function () {
+        Route::get('/', 'index')->name('index');
+        Route::get('/{friend}', 'show')->name('show');
+        Route::get('/{friend}/poll', 'poll')->name('poll');
+        Route::post('/{friend}', 'store')->middleware('throttle:60,1')->name('store');
+    });
 
     Route::post('/institution-memberships', [InstitutionMembershipController::class, 'store'])
         ->name('institution-memberships.store');

@@ -1,5 +1,5 @@
 <nav role="navigation" aria-label="{{ __('Menu Mobile') }}"
-    class="fixed inset-x-0 bottom-0 z-50 flex items-center justify-around gap-1 border-t border-glass bg-header px-sm
+    class="fixed inset-x-0 bottom-0 z-50 flex items-center justify-around gap-0.5 border-t border-glass bg-header px-1
            h-[calc(64px+env(safe-area-inset-bottom,0px))] pb-safe shadow-[0_-8px_24px_rgba(0,0,0,0.06)] backdrop-blur-lg md:hidden">
 
     <x-ui.bottom-nav-link :href="route('dashboard')" icon="home" :active="request()->routeIs('dashboard')">
@@ -20,5 +20,13 @@
 
     <x-ui.bottom-nav-link :href="route('practice.show')" icon="psychology" :active="request()->routeIs('practice.*')">
         {{ __('Praticar') }}
+    </x-ui.bottom-nav-link>
+
+    <x-ui.bottom-nav-link :href="route('friends.index')" icon="group" :active="request()->routeIs('friends.*')">
+        {{ __('Amigos') }}
+    </x-ui.bottom-nav-link>
+
+    <x-ui.bottom-nav-link :href="route('messages.index')" icon="chat_bubble" :active="request()->routeIs('messages.*')">
+        {{ __('Chat') }}
     </x-ui.bottom-nav-link>
 </nav>
