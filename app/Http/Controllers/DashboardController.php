@@ -26,6 +26,7 @@ class DashboardController extends Controller
                 ->concat($agenda->between($user, now(), now()->addDays(self::UPCOMING_DAYS)))
                 ->take(6),
             'deck' => $picker->deck($user),
+            'friends' => $user->friends()->with('streak')->orderBy('name')->get(),
         ]);
     }
 }

@@ -1,8 +1,10 @@
-@props(['board'])
+@props(['board', 'friends'])
 
-{{-- Foguinho do estudante (StreakService). "Com Amigos" segue mockado até existir a amizade. --}}
+{{-- Foguinho do estudante (StreakService) e dos amigos (Friendship). --}}
 @php
     $streak = $board->streak;
+    $shownFriends = $friends->take(3);
+    $hiddenFriends = $friends->count() - $shownFriends->count();
 @endphp
 
 <x-ui.card>
@@ -39,24 +41,28 @@
             </span>
         </div>
 
-        <div class="flex items-center justify-between rounded-md border border-surface-variant bg-surface-bright px-md py-sm
-                    transition-transform duration-fast active:scale-[0.98]">
+        <a href="{{ route('friends.index') }}" class="flex items-center justify-between rounded-md border border-surface-variant
+                  bg-surface-bright px-md py-sm transition-transform duration-fast active:scale-[0.98]">
             <span class="text-[0.95rem] font-medium text-on-surface">{{ __('Com Amigos') }}</span>
 
-            <div class="flex items-center">
-                @foreach ([
-                    ['name' => 'Mariana Costa', 'photo' => 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=100&auto=format&fit=crop&q=80'],
-                    ['name' => 'Lucas Silva', 'photo' => 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=100&auto=format&fit=crop&q=80'],
-                ] as $friend)
-                    <img src="{{ $friend['photo'] }}" alt="{{ $friend['name'] }}" title="{{ $friend['name'] }}"
-                        class="-ml-2 size-8 rounded-full border-2 border-card bg-surface-variant object-cover first:ml-0
-                               transition-transform duration-fast hover:z-10 hover:scale-110">
-                @endforeach
+            @if ($friends->isEmpty())
+                <span class="flex items-center gap-1 text-sm font-semibold text-primary">
+                    <x-ui.icon name="person_add" size="text-lg" />
+                    {{ __('Adicionar') }}
+                </span>
+            @else
+                <div class="flex items-center">
+                    @foreach ($shownFriends as $friend)
+                        <x-friends.avatar :user="$friend" class="-ml-2 size-8 border-2 border-card first:ml-0" />
+                    @endforeach
 
-                <div title="{{ __('Mais 2 colegas') }}"
-                    class="-ml-2 flex size-8 items-center justify-center rounded-full border-2 border-card bg-tertiary-container
-                           text-xs font-bold text-white">+2</div>
-            </div>
-        </div>
+                    @if ($hiddenFriends > 0)
+                        <div title="{{ trans_choice('{1} Mais :count amigo|[2,*] Mais :count amigos', $hiddenFriends) }}"
+                            class="-ml-2 flex size-8 items-center justify-center rounded-full border-2 border-card bg-surface-variant
+                                   text-xs font-bold text-on-surface-variant">+{{ $hiddenFriends }}</div>
+                    @endif
+                </div>
+            @endif
+        </a>
     </div>
 </x-ui.card>

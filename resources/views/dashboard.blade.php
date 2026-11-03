@@ -1,7 +1,7 @@
 <x-app-layout>
     {{-- Linha 1: estatísticas rápidas --}}
     <section class="grid grid-cols-1 gap-md md:grid-cols-2" aria-label="{{ __('Estatísticas Rápidas') }}">
-        <x-dashboard.streaks :board="$dailyBoard" />
+        <x-dashboard.streaks :board="$dailyBoard" :friends="$friends" />
         <x-dashboard.grades :enrollments="$enrollments" />
     </section>
 
