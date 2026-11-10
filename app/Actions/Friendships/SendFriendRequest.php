@@ -5,12 +5,14 @@ namespace App\Actions\Friendships;
 use App\Enums\FriendshipStatus;
 use App\Models\Friendship;
 use App\Models\User;
+use App\Notifications\FriendRequestReceived;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Validation\ValidationException;
 
 /**
  * Pede amizade. Se a outra pessoa já tinha pedido a mesma coisa, os dois
- * querem: o pedido dela é aceito em vez de criar um segundo vínculo.
+ * querem: o pedido dela é aceito em vez de criar um segundo vínculo. O
+ * destinatário de um pedido novo é avisado.
  */
 class SendFriendRequest
 {
@@ -23,7 +25,7 @@ class SendFriendRequest
             throw ValidationException::withMessages(['email' => __('Você não pode adicionar a si mesmo.')]);
         }
 
-        return DB::transaction(function () use ($requester, $addressee): Friendship {
+        $friendship = DB::transaction(function () use ($requester, $addressee): Friendship {
             $existing = Friendship::query()->between($requester, $addressee)->lockForUpdate()->first();
 
             if ($existing === null) {
@@ -44,5 +46,11 @@ class SendFriendRequest
 
             return (new AcceptFriendRequest)->handle($existing);
         });
+
+        if ($friendship->wasRecentlyCreated) {
+            $addressee->notify(new FriendRequestReceived($requester));
+        }
+
+        return $friendship;
     }
 }

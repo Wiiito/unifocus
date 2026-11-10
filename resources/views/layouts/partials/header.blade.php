@@ -29,6 +29,8 @@
             </a>
         @endisset
 
+        @include('layouts.partials.notification-bell')
+
         {{-- Alternador de tema --}}
         <button type="button" x-data @click="$store.theme.toggle()"
             :aria-label="$store.theme.isDark ? '{{ __('Ativar tema claro') }}' : '{{ __('Ativar tema escuro') }}'"
@@ -51,6 +53,10 @@
 
             <x-slot name="content">
                 <x-dropdown-link :href="route('profile.edit')">{{ __('Perfil') }}</x-dropdown-link>
+
+                {{-- Só aparece quando o navegador oferece a instalação (evento beforeinstallprompt). --}}
+                <x-dropdown-link href="#" x-data x-show="$store.pwa.canInstall" x-cloak
+                    @click.prevent="$store.pwa.install()">{{ __('Instalar o app') }}</x-dropdown-link>
 
                 <form method="POST" action="{{ route('logout') }}">
                     @csrf

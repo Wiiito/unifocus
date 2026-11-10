@@ -9,7 +9,7 @@ services:
   # PHP 8.4 + Composer + Node (roda o Laravel via FPM e os comandos artisan)
   # ---------------------------------------------------------------------------
   app:
-    build:
+    build: &php-build
       context: .
       dockerfile: Dockerfile
       args:
@@ -25,6 +25,40 @@ services:
     depends_on:
       postgres:
         condition: service_healthy
+    networks:
+      - unifocus
+
+  # ---------------------------------------------------------------------------
+  # Fila: entrega as notificações push e roda a geração de questões por IA
+  # ---------------------------------------------------------------------------
+  queue:
+    build: *php-build
+    image: unifocus/php:8.4
+    container_name: unifocus_queue
+    restart: unless-stopped
+    working_dir: /var/www/html
+    command: ["php", "artisan", "queue:work", "--tries=3", "--max-time=3600"]
+    volumes:
+      - ./:/var/www/html
+    depends_on:
+      - app
+    networks:
+      - unifocus
+
+  # ---------------------------------------------------------------------------
+  # Agendador: lembretes de prazos (08h) e do foguinho (20h)
+  # ---------------------------------------------------------------------------
+  scheduler:
+    build: *php-build
+    image: unifocus/php:8.4
+    container_name: unifocus_scheduler
+    restart: unless-stopped
+    working_dir: /var/www/html
+    command: ["php", "artisan", "schedule:work"]
+    volumes:
+      - ./:/var/www/html
+    depends_on:
+      - app
     networks:
       - unifocus
 
