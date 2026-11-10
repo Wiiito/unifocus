@@ -48,9 +48,12 @@ class StudentAgenda
     }
 
     /**
+     * Prazos de atividades ainda não entregues dentro do intervalo. Também
+     * usado pelos lembretes push (notifications:deadlines).
+     *
      * @return Collection<int, AgendaItem>
      */
-    private function deadlines(User $user, CarbonInterface $from, CarbonInterface $until): Collection
+    public function deadlines(User $user, CarbonInterface $from, CarbonInterface $until): Collection
     {
         return $this->pendingActivities($user)
             ->whereBetween('due_at', [$from, $until])
