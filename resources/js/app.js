@@ -1,4 +1,5 @@
 import Alpine from 'alpinejs';
+import './pwa';
 
 /**
  * Tema claro/escuro.

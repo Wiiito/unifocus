@@ -10,6 +10,7 @@
     <title>{{ $title ?? config('app.name', 'UniFocus') }}</title>
 
     <link rel="icon" type="image/png" href="{{ asset('images/logo-unifocus.png') }}">
+    @include('layouts.partials.pwa')
 
     {{-- Aplica o tema antes da primeira pintura, evitando flash de cor errada. --}}
     <script>

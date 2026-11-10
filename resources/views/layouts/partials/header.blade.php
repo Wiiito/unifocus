@@ -52,6 +52,10 @@
             <x-slot name="content">
                 <x-dropdown-link :href="route('profile.edit')">{{ __('Perfil') }}</x-dropdown-link>
 
+                {{-- Só aparece quando o navegador oferece a instalação (evento beforeinstallprompt). --}}
+                <x-dropdown-link href="#" x-data x-show="$store.pwa.canInstall" x-cloak
+                    @click.prevent="$store.pwa.install()">{{ __('Instalar o app') }}</x-dropdown-link>
+
                 <form method="POST" action="{{ route('logout') }}">
                     @csrf
                     <x-dropdown-link :href="route('logout')"
