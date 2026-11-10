@@ -3,8 +3,8 @@
     <button type="button" @click="open = ! open" :aria-expanded="open"
         aria-label="{{ trans_choice('{0} Notificações|{1} Notificações, :count não lida|[2,*] Notificações, :count não lidas', $unreadNotificationCount) }}"
         title="{{ __('Notificações') }}"
-        class="relative flex size-[42px] items-center justify-center rounded-full bg-surface-container-low text-primary
-               transition duration-fast hover:bg-surface-container active:scale-90">
+        class="relative flex size-10 items-center justify-center rounded-full bg-surface-container-low text-primary
+               transition duration-fast hover:bg-surface-container active:scale-90 sm:size-[42px]">
         <x-ui.icon name="notifications" :filled="$unreadNotificationCount > 0" />
 
         @if ($unreadNotificationCount > 0)
