@@ -29,6 +29,8 @@
             </a>
         @endisset
 
+        @include('layouts.partials.notification-bell')
+
         {{-- Alternador de tema --}}
         <button type="button" x-data @click="$store.theme.toggle()"
             :aria-label="$store.theme.isDark ? '{{ __('Ativar tema claro') }}' : '{{ __('Ativar tema escuro') }}'"

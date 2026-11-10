@@ -135,4 +135,14 @@ class User extends Authenticatable
     {
         return $this->hasMany(QuestionAttempt::class);
     }
+
+    /**
+     * Navegadores inscritos para receber notificações push.
+     *
+     * @return HasMany<PushSubscription, $this>
+     */
+    public function pushSubscriptions(): HasMany
+    {
+        return $this->hasMany(PushSubscription::class);
+    }
 }

@@ -9,6 +9,7 @@ use App\Support\Questions\OpenRouterQuestionGenerator;
 use App\Support\Questions\UnavailableQuestionGenerator;
 use App\Support\Streaks\StreakService;
 use App\View\Composers\DailyChallengeComposer;
+use App\View\Composers\NotificationBellComposer;
 use Illuminate\Contracts\Foundation\Application;
 use Illuminate\Support\Facades\View;
 use Illuminate\Support\ServiceProvider;
@@ -53,5 +54,7 @@ class AppServiceProvider extends ServiceProvider
             ['layouts.partials.header', 'layouts.partials.sidebar', 'dashboard'],
             DailyChallengeComposer::class,
         );
+
+        View::composer('layouts.partials.notification-bell', NotificationBellComposer::class);
     }
 }
