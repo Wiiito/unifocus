@@ -27,12 +27,12 @@
             {{-- Frente: pergunta --}}
             <div class="backface-hidden absolute inset-0 flex flex-col items-center justify-center rounded-lg border border-card-border
                         bg-card bg-gradient-to-br from-[rgba(33,150,243,0.06)] to-[rgba(0,97,164,0.02)] px-md py-lg shadow-card">
-                <span class="mb-sm rounded-full bg-tertiary-fixed px-3 py-1 font-mono text-xs font-bold uppercase tracking-[0.12em] text-tertiary"
+                <span class="mb-sm rounded-full border border-primary/25 bg-primary/10 px-3.5 py-1 font-mono text-xs font-extrabold uppercase tracking-[0.12em] text-primary dark:border-primary/40 dark:bg-primary-container dark:text-white"
                     x-text="card.tag">{{ $cards[0]['tag'] }}</span>
 
-                <h3 class="mb-sm text-[1.45rem] font-bold text-primary md:text-[1.85rem]" x-text="card.topic">{{ $cards[0]['topic'] }}</h3>
+                <h3 class="mb-sm text-[1.45rem] font-extrabold text-primary dark:text-white md:text-[1.85rem]" x-text="card.topic">{{ $cards[0]['topic'] }}</h3>
 
-                <p class="mx-auto mb-md line-clamp-4 max-w-[440px] shrink-0 leading-relaxed text-on-surface-variant" x-text="card.question">
+                <p class="mx-auto mb-md line-clamp-4 max-w-[440px] shrink-0 leading-relaxed text-on-surface" x-text="card.question">
                     {{ $cards[0]['question'] }}
                 </p>
 
