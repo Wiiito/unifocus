@@ -46,19 +46,19 @@
                 <a href="{{ route('profile.edit') }}"
                    title="{{ __('Configurações') }}"
                    aria-label="{{ __('Configurações') }}"
-                   class="flex size-11 items-center justify-center rounded-full bg-white/15 text-white shadow-sm backdrop-blur-md transition-all duration-normal ease-bounce hover:scale-110 hover:rotate-45 hover:bg-white/25 hover:shadow-lg active:scale-90">
+                   class="flex size-11 items-center justify-center rounded-full bg-white/15 text-white shadow-sm backdrop-blur-md transition-all duration-normal ease-bounce hover:scale-110 hover:rotate-45 hover:bg-white/25 hover:shadow-lg active:scale-90 dark:bg-slate-900/20 dark:text-slate-900 dark:hover:bg-slate-900/30">
                     <x-ui.icon name="settings" size="text-2xl" />
                 </a>
 
                 <div class="flex items-center gap-2">
                     <x-application-logo class="w-8 drop-shadow-sm" />
-                    <span class="text-xl font-extrabold tracking-tight text-white">UniFocus</span>
+                    <span class="text-xl font-extrabold tracking-tight text-white dark:text-slate-900">UniFocus</span>
                 </div>
 
                 <button type="button" x-data @click="$store.theme.toggle()"
                     :aria-label="$store.theme.isDark ? '{{ __('Ativar tema claro') }}' : '{{ __('Ativar tema escuro') }}'"
                     :title="$store.theme.isDark ? '{{ __('Tema claro') }}' : '{{ __('Tema escuro') }}'"
-                    class="flex size-11 items-center justify-center rounded-full bg-white/15 text-white shadow-sm backdrop-blur-md transition-all duration-normal ease-bounce hover:scale-110 hover:rotate-12 hover:bg-white/25 hover:shadow-lg active:scale-90">
+                    class="flex size-11 items-center justify-center rounded-full bg-white/15 text-white shadow-sm backdrop-blur-md transition-all duration-normal ease-bounce hover:scale-110 hover:rotate-12 hover:bg-white/25 hover:shadow-lg active:scale-90 dark:bg-slate-900/20 dark:text-slate-900 dark:hover:bg-slate-900/30">
                     <x-ui.icon name="dark_mode" x-show="! $store.theme.isDark" />
                     <x-ui.icon name="light_mode" x-show="$store.theme.isDark" x-cloak />
                 </button>
@@ -70,7 +70,7 @@
                    title="{{ __('Ir para o perfil') }}"
                    aria-label="{{ __('Ir para o perfil de :name', ['name' => $currentUser?->name]) }}"
                    class="relative flex items-center justify-center group cursor-pointer">
-                    <div class="relative flex size-28 items-center justify-center overflow-hidden rounded-xl border-2 border-white/30 bg-white/15 p-1.5 shadow-inner backdrop-blur-md transition-all duration-normal ease-bounce group-hover:scale-105 group-hover:border-white/60 group-hover:bg-white/25">
+                    <div class="relative flex size-28 items-center justify-center overflow-hidden rounded-xl border-2 border-white/30 bg-white/15 p-1.5 shadow-inner backdrop-blur-md transition-all duration-normal ease-bounce group-hover:scale-105 group-hover:border-white/60 group-hover:bg-white/25 dark:border-slate-900/20 dark:bg-slate-900/15 dark:group-hover:border-slate-900/40 dark:group-hover:bg-slate-900/25">
                         <img src="{{ $userAvatar }}"
                              alt="{{ $currentUser?->name }}"
                              class="size-full rounded-lg object-cover shadow-md transition-transform duration-normal group-hover:scale-105" />
@@ -80,7 +80,7 @@
                     </div>
                 </a>
 
-                <span class="mt-3 inline-flex items-center gap-1.5 rounded-full bg-white/15 px-3 py-1 text-xs font-semibold tracking-wide text-white backdrop-blur-sm transition-transform duration-normal hover:scale-105">
+                <span class="mt-3 inline-flex items-center gap-1.5 rounded-full bg-white/15 px-3 py-1 text-xs font-semibold tracking-wide text-white backdrop-blur-sm transition-transform duration-normal hover:scale-105 dark:bg-slate-900/20 dark:text-slate-900">
                     <span class="size-2 rounded-full bg-streak animate-pulse"></span>
                     {{ __('Sua vida universitária em foco') }}
                 </span>

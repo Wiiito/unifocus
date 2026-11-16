@@ -49,16 +49,16 @@
 
             {{-- Verso: resposta --}}
             <div class="backface-hidden rotate-y-180 absolute inset-0 flex flex-col items-center justify-center rounded-lg
-                        border border-white/20 bg-gradient-to-br from-primary to-secondary px-md py-lg text-on-primary shadow-card-hover">
-                <span class="mb-sm rounded-full bg-white/20 px-3 py-1 font-mono text-xs font-bold uppercase tracking-[0.12em] text-white">
+                        border border-white/20 bg-gradient-to-br from-primary to-secondary px-md py-lg text-on-primary shadow-card-hover dark:border-slate-900/15">
+                <span class="mb-sm rounded-full bg-white/20 px-3 py-1 font-mono text-xs font-bold uppercase tracking-[0.12em] text-white dark:bg-slate-900/20 dark:text-slate-900">
                     {{ __('Resposta • Conceito Chave') }}
                 </span>
 
-                <h3 class="mb-sm text-[1.45rem] font-bold text-white md:text-[1.85rem]" x-text="card.topic"></h3>
+                <h3 class="mb-sm text-[1.45rem] font-bold text-white dark:text-slate-900 md:text-[1.85rem]" x-text="card.topic"></h3>
 
-                <p class="mx-auto mb-md line-clamp-5 max-w-[440px] shrink-0 leading-relaxed text-white/90" x-text="card.answer"></p>
+                <p class="mx-auto mb-md line-clamp-5 max-w-[440px] shrink-0 leading-relaxed text-white/90 dark:text-slate-900/90" x-text="card.answer"></p>
 
-                <x-secondary-button @click.stop="next()" class="!border-white/30 !bg-white !text-primary hover:!bg-white/90">
+                <x-secondary-button @click.stop="next()" class="!border-white/30 !bg-white !text-primary hover:!bg-white/90 dark:!border-slate-900/20 dark:!bg-slate-900 dark:!text-white dark:hover:!bg-slate-800">
                     <x-ui.icon name="sync" size="text-xl" />
                     <span>{{ __('Próximo Card') }}</span>
                 </x-secondary-button>

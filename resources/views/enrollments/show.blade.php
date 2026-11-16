@@ -106,23 +106,8 @@
         </x-ui.card>
     </section>
 
-    {{-- Calendário do período (semana de provas, feriados...) --}}
-    @if ($term?->events->isNotEmpty())
-        <x-ui.card>
-            <x-ui.card-title icon="event_note" class="mb-sm">{{ __('Calendário de :term', ['term' => $term->name]) }}</x-ui.card-title>
-
-            <ul class="flex flex-wrap gap-2">
-                @foreach ($term->events as $event)
-                    <li class="rounded-md border border-surface-variant bg-surface-container-low px-3 py-2 text-sm">
-                        <span class="font-semibold text-on-surface">{{ $event->title }}</span>
-                        <span class="block font-mono text-xs text-on-surface-variant">
-                            {{ $event->starts_on->format('d/m') }}@if (! $event->ends_on->isSameDay($event->starts_on)) – {{ $event->ends_on->format('d/m') }}@endif
-                        </span>
-                    </li>
-                @endforeach
-            </ul>
-        </x-ui.card>
-    @endif
+    {{-- Calendário da matéria (provas, entregas e marcos do período) --}}
+    <x-academic.subject-calendar :enrollment="$enrollment" :term="$term" :activities="$activities" />
 
     {{-- Atividades --}}
     <x-ui.card id="atividades" class="scroll-mt-28">
