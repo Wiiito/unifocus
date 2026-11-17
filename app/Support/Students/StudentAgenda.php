@@ -2,10 +2,12 @@
 
 namespace App\Support\Students;
 
+use App\Enums\ActivityType;
 use App\Enums\LessonStatus;
 use App\Enums\SubmissionStatus;
 use App\Models\AcademicTermEvent;
 use App\Models\Activity;
+use App\Models\Enrollment;
 use App\Models\Lesson;
 use App\Models\User;
 use Carbon\CarbonInterface;
@@ -45,6 +47,144 @@ class StudentAgenda
             ->orderBy('due_at')
             ->get()
             ->map(fn (Activity $activity) => $this->deadlineItem($activity, $user, isUrgent: true));
+    }
+
+    /**
+     * Dados completos de todas as matérias em andamento para o calendário
+     * mensal e a aba de lembretes da página /agenda.
+     *
+     * @return array{
+     *     subjects: array<int, array{id: int, name: string, color: string}>,
+     *     activities: array<int, array<string, mixed>>,
+     *     lessons: array<int, array<string, mixed>>,
+     *     events: array<int, array<string, mixed>>,
+     * }
+     */
+    public function calendarData(User $user): array
+    {
+        $enrollments = $user->enrollments()
+            ->ongoing()
+            ->withSummary()
+            ->get();
+
+        $subjects = $enrollments
+            ->map(fn (Enrollment $enrollment): array => [
+                'id' => $enrollment->subject()->id,
+                'name' => $enrollment->subject()->name,
+                'color' => $enrollment->subject()->displayColor(),
+            ])
+            ->unique('id')
+            ->sortBy('name')
+            ->values()
+            ->all();
+
+        $urgentCutoff = now()->addHours(self::URGENT_WITHIN_HOURS);
+        $now = now();
+
+        $activities = $this->pendingActivities($user)
+            ->orderBy('due_at')
+            ->get()
+            ->map(function (Activity $activity) use ($user, $now, $urgentCutoff): array {
+                $subject = $activity->classGroup->subject;
+                $isOverdue = $activity->due_at->lt($now);
+                $isUrgent = ! $isOverdue && $activity->due_at->lessThanOrEqualTo($urgentCutoff);
+                $isExam = in_array($activity->type, [ActivityType::Exam, ActivityType::Recovery], true);
+
+                return [
+                    'id' => $activity->id,
+                    'kind' => 'activity',
+                    'category' => $isExam ? 'exam' : 'delivery',
+                    'typeLabel' => $activity->type->label(),
+                    'icon' => $activity->type->icon(),
+                    'title' => $activity->title,
+                    'subjectId' => $subject->id,
+                    'subjectName' => $subject->name,
+                    'subjectColor' => $subject->displayColor(),
+                    'date' => $activity->due_at->format('Y-m-d'),
+                    'dayNum' => $activity->due_at->format('d'),
+                    'monthShort' => $activity->due_at->translatedFormat('M'),
+                    'dateLabel' => $activity->due_at->translatedFormat('d/m'),
+                    'timeLabel' => $activity->due_at->format('H:i'),
+                    'isOverdue' => $isOverdue,
+                    'isUrgent' => $isUrgent,
+                    'statusLabel' => $isOverdue ? __('Atrasada') : ($isUrgent ? __('Urgente') : __('Pendente')),
+                    'url' => route('enrollments.activities.edit', [$this->enrollmentIdFor($user, $activity->class_group_id), $activity]),
+                ];
+            })
+            ->values()
+            ->all();
+
+        $today = today();
+
+        $lessons = Lesson::query()
+            ->whereIn('class_group_id', $this->ongoingClassGroupIds($user))
+            ->where('status', '!=', LessonStatus::Canceled)
+            ->with('classGroup.subject')
+            ->orderBy('starts_at')
+            ->get()
+            ->map(function (Lesson $lesson) use ($user, $today): array {
+                $subject = $lesson->classGroup->subject;
+                $dayLabel = $lesson->starts_at->isToday()
+                    ? __('Hoje')
+                    : ($lesson->starts_at->isTomorrow() ? __('Amanhã') : $lesson->starts_at->translatedFormat('l'));
+
+                return [
+                    'id' => $lesson->id,
+                    'kind' => 'lesson',
+                    'category' => 'lesson',
+                    'typeLabel' => __('Aula'),
+                    'icon' => 'school',
+                    'title' => $lesson->title,
+                    'subjectId' => $subject->id,
+                    'subjectName' => $subject->name,
+                    'subjectColor' => $subject->displayColor(),
+                    'date' => $lesson->starts_at->format('Y-m-d'),
+                    'dayLabel' => $dayLabel,
+                    'dateLabel' => $lesson->starts_at->format('d/m'),
+                    'timeLabel' => $lesson->starts_at->format('H:i'),
+                    'isPast' => $lesson->starts_at->lt($today),
+                    'url' => route('enrollments.lessons.edit', [$this->enrollmentIdFor($user, $lesson->class_group_id), $lesson]),
+                ];
+            })
+            ->values()
+            ->all();
+
+        $termIds = $enrollments
+            ->pluck('classGroup.academic_term_id')
+            ->filter()
+            ->unique()
+            ->values();
+
+        $events = AcademicTermEvent::query()
+            ->whereIn('academic_term_id', $termIds)
+            ->with('academicTerm.institution')
+            ->orderBy('starts_on')
+            ->get()
+            ->map(fn (AcademicTermEvent $event): array => [
+                'id' => $event->id,
+                'kind' => 'event',
+                'category' => 'event',
+                'typeLabel' => $event->type->label(),
+                'icon' => $event->type->icon(),
+                'title' => $event->title,
+                'institutionName' => $event->academicTerm->institution->name,
+                'termName' => $event->academicTerm->name,
+                'startsOn' => $event->starts_on->format('Y-m-d'),
+                'endsOn' => $event->ends_on->format('Y-m-d'),
+                'rangeLabel' => $event->starts_on->format('d/m')
+                    .(! $event->ends_on->isSameDay($event->starts_on) ? ' – '.$event->ends_on->format('d/m') : ''),
+                'isOngoing' => $today->betweenIncluded($event->starts_on, $event->ends_on),
+                'isPast' => $event->ends_on->lt($today),
+            ])
+            ->values()
+            ->all();
+
+        return [
+            'subjects' => $subjects,
+            'activities' => $activities,
+            'lessons' => $lessons,
+            'events' => $events,
+        ];
     }
 
     /**
