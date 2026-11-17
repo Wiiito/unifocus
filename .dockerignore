@@ -6,3 +6,10 @@ storage/logs/*
 storage/framework/cache/*
 storage/framework/sessions/*
 storage/framework/views/*
+.env
+.env.*
+!.env.example
+public/build
+public/hot
+public/storage
+docker-compose.yml
