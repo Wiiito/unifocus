@@ -28,13 +28,22 @@
 </head>
 
 <body class="min-h-screen">
+    @php($isDashboard = request()->routeIs('dashboard'))
+
     @include('layouts.partials.header')
 
-    <div class="mx-auto grid w-full max-w-[1320px] grid-cols-1 gap-md px-gutter md:grid-cols-[220px_1fr] md:px-md lg:grid-cols-[260px_1fr]
-                mt-[calc(84px+env(safe-area-inset-top,0px))] mb-[calc(84px+env(safe-area-inset-bottom,0px))] md:mb-md">
+    <div @class([
+        'mx-auto grid w-full max-w-[1320px] grid-cols-1 gap-md md:grid-cols-[220px_1fr] md:px-md lg:grid-cols-[260px_1fr] md:mb-md',
+        'md:mt-[calc(84px+env(safe-area-inset-top,0px))]' => $isDashboard,
+        'px-gutter mt-[calc(84px+env(safe-area-inset-top,0px))] mb-[calc(84px+env(safe-area-inset-bottom,0px))]' => ! $isDashboard,
+    ])>
         @include('layouts.partials.sidebar')
 
-        <main class="flex flex-col gap-md">
+        <main @class([
+            'flex flex-col min-w-0',
+            'md:gap-md' => $isDashboard,
+            'gap-md' => ! $isDashboard,
+        ])>
             @isset($header)
                 <header class="flex items-center justify-between">
                     {{ $header }}

@@ -27,4 +27,15 @@ enum TermEventType: string
             self::Other => __('Outro'),
         };
     }
+
+    public function icon(): string
+    {
+        return match ($this) {
+            self::ExamWeek => 'quiz',
+            self::Holiday => 'celebration',
+            self::Recess => 'beach_access',
+            self::Enrollment => 'how_to_reg',
+            self::Other => 'event_note',
+        };
+    }
 }

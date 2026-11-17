@@ -3,7 +3,6 @@
 namespace App\Http\Controllers;
 
 use App\Support\Streaks\StreakService;
-use App\Support\Students\AgendaItem;
 use App\Support\Students\StudentAgenda;
 use Illuminate\Contracts\View\View;
 use Illuminate\Http\Request;
@@ -20,9 +19,7 @@ class AgendaController extends Controller
         $streaks->recordAgendaView($user);
 
         return view('agenda.index', [
-            'overdue' => $agenda->overdue($user),
-            'days' => $agenda->between($user, today(), today()->addDays(self::DAYS_AHEAD)->endOfDay())
-                ->groupBy(fn (AgendaItem $item) => $item->startsAt->toDateString()),
+            'calendar' => $agenda->calendarData($user),
             'daysAhead' => self::DAYS_AHEAD,
         ]);
     }

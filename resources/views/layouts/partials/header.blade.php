@@ -1,10 +1,15 @@
 @php
     $user = auth()->user();
+    $isDashboard = request()->routeIs('dashboard');
 @endphp
 
 <header role="banner"
-    class="fixed inset-x-0 top-0 z-50 flex items-center justify-between gap-2 border-b border-glass bg-header px-gutter md:px-md
-           h-[calc(68px+env(safe-area-inset-top,0px))] pt-safe backdrop-blur-lg transition-colors duration-normal ease-normal">
+    @class([
+        'fixed inset-x-0 top-0 z-50 items-center justify-between gap-2 border-b border-glass bg-header px-gutter md:px-md',
+        'h-[calc(68px+env(safe-area-inset-top,0px))] pt-safe backdrop-blur-lg transition-colors duration-normal ease-normal',
+        'hidden md:flex' => $isDashboard,
+        'flex' => ! $isDashboard,
+    ])>
 
     <div class="flex min-w-0 items-center gap-2 sm:gap-sm">
         <a href="{{ route('profile.edit') }}" aria-label="{{ __('Perfil do Estudante') }}"
