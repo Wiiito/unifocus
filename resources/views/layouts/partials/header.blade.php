@@ -16,7 +16,11 @@
             class="flex size-10 shrink-0 items-center justify-center rounded-full bg-gradient-to-br from-primary-container to-primary
                    text-xl font-bold text-on-primary shadow-[0_4px_12px_rgba(0,97,164,0.25)]
                    transition duration-bounce ease-bounce active:scale-90 sm:size-11">
-            {{ str($user?->name ?? 'U')->substr(0, 1)->upper() }}
+            @if ($user?->avatar_url)
+                <img src="{{ $user->avatar_url }}" alt="" referrerpolicy="no-referrer" class="size-full rounded-full object-cover" />
+            @else
+                {{ str($user?->name ?? 'U')->substr(0, 1)->upper() }}
+            @endif
         </a>
 
         <div class="flex min-w-0 flex-col">

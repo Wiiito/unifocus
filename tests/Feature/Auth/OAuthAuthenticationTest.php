@@ -58,6 +58,43 @@ class OAuthAuthenticationTest extends TestCase
         $this->assertTrue($identity->authenticatable->is(User::sole()));
     }
 
+    public function test_the_provider_photo_becomes_the_profile_photo_and_follows_later_changes(): void
+    {
+        Socialite::fake('google', ProviderUser::fake([
+            'id' => 'google-123',
+            'email' => 'flavio@example.com',
+            'avatar' => 'https://lh3.googleusercontent.com/a/foto-antiga',
+        ]));
+        $this->get(route('oauth.callback', 'google'));
+
+        $this->assertSame('https://lh3.googleusercontent.com/a/foto-antiga', User::sole()->avatar_url);
+
+        $this->post('/logout');
+        Socialite::fake('google', ProviderUser::fake([
+            'id' => 'google-123',
+            'email' => 'flavio@example.com',
+            'avatar' => 'https://lh3.googleusercontent.com/a/foto-nova',
+        ]));
+        $this->get(route('oauth.callback', 'google'));
+
+        $this->assertSame('https://lh3.googleusercontent.com/a/foto-nova', User::sole()->avatar_url);
+    }
+
+    public function test_a_login_without_photo_keeps_the_current_profile_photo(): void
+    {
+        $user = User::factory()->create(['email' => 'flavio@example.com']);
+        $user->forceFill(['avatar_url' => 'https://lh3.googleusercontent.com/a/foto'])->save();
+
+        Socialite::fake('google', ProviderUser::fake([
+            'id' => 'google-123',
+            'email' => 'flavio@example.com',
+            'avatar' => null,
+        ]));
+        $this->get(route('oauth.callback', 'google'));
+
+        $this->assertSame('https://lh3.googleusercontent.com/a/foto', $user->fresh()->avatar_url);
+    }
+
     public function test_an_existing_account_with_the_same_email_is_linked_instead_of_duplicated(): void
     {
         $user = User::factory()->create(['email' => 'flavio@example.com']);

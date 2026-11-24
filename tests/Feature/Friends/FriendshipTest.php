@@ -107,4 +107,22 @@ class FriendshipTest extends TestCase
     {
         $this->get(route('friends.index'))->assertRedirect(route('login'));
     }
+
+    public function test_google_photos_replace_initials_for_the_student_and_friends(): void
+    {
+        $user = User::factory()->create();
+        $user->forceFill(['avatar_url' => 'https://lh3.googleusercontent.com/a/minha-foto'])->save();
+        $friendWithPhoto = User::factory()->create();
+        $friendWithPhoto->forceFill(['avatar_url' => 'https://lh3.googleusercontent.com/a/foto-amiga'])->save();
+        $friendWithoutPhoto = User::factory()->create(['name' => 'Zeca Quintino']);
+        Friendship::factory()->accepted()->create(['requester_id' => $user->id, 'addressee_id' => $friendWithPhoto->id]);
+        Friendship::factory()->accepted()->create(['requester_id' => $friendWithoutPhoto->id, 'addressee_id' => $user->id]);
+
+        $this->actingAs($user)
+            ->get(route('friends.index'))
+            ->assertOk()
+            ->assertSee('src="https://lh3.googleusercontent.com/a/minha-foto"', false)
+            ->assertSee('src="https://lh3.googleusercontent.com/a/foto-amiga"', false)
+            ->assertSeeInOrder(['title="Zeca Quintino"', 'ZQ'], false);
+    }
 }

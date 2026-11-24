@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
 use App\Models\OauthIdentity;
+use App\Models\User;
 use Illuminate\Contracts\Auth\Authenticatable;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Http\RedirectResponse;
@@ -103,8 +104,23 @@ class OAuthController extends Controller
                     : null,
             ])->save();
 
+            $this->syncAvatar($identity, $providerUser);
+
             return $identity;
         });
+    }
+
+    /**
+     * A foto do provedor vira a foto de perfil do estudante. Só o User tem
+     * foto de perfil; admins (ou outro model autenticável) ficam de fora.
+     */
+    protected function syncAvatar(OauthIdentity $identity, ProviderUser $providerUser): void
+    {
+        $account = $identity->authenticatable;
+
+        if ($account instanceof User && filled($providerUser->getAvatar())) {
+            $account->forceFill(['avatar_url' => $providerUser->getAvatar()])->save();
+        }
     }
 
     /**

@@ -36,8 +36,7 @@
 
             @php
                 $currentUser = auth()->user();
-                $userAvatar = $currentUser?->avatar
-                    ?? $currentUser?->oauthIdentities()->whereNotNull('avatar')->value('avatar')
+                $userAvatar = $currentUser?->avatar_url
                     ?? 'https://ui-avatars.com/api/?name='.urlencode($currentUser?->name ?? 'U').'&background=ffffff&color=0061a4&size=256&bold=true';
             @endphp
 
@@ -73,6 +72,7 @@
                     <div class="relative flex size-28 items-center justify-center overflow-hidden rounded-xl border-2 border-white/30 bg-white/15 p-1.5 shadow-inner backdrop-blur-md transition-all duration-normal ease-bounce group-hover:scale-105 group-hover:border-white/60 group-hover:bg-white/25 dark:border-slate-900/20 dark:bg-slate-900/15 dark:group-hover:border-slate-900/40 dark:group-hover:bg-slate-900/25">
                         <img src="{{ $userAvatar }}"
                              alt="{{ $currentUser?->name }}"
+                             referrerpolicy="no-referrer"
                              class="size-full rounded-lg object-cover shadow-md transition-transform duration-normal group-hover:scale-105" />
                     </div>
                     <div class="absolute -bottom-2 -right-2 flex size-10 items-center justify-center rounded-full bg-streak shadow-lg transition-transform duration-normal ease-bounce group-hover:scale-110 group-hover:rotate-12">
