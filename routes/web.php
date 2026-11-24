@@ -15,6 +15,7 @@ use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\PushSubscriptionController;
 use App\Http\Controllers\ReportCardController;
 use App\Http\Controllers\SubjectController;
+use App\Http\Controllers\UserLocationController;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', function () {
@@ -64,6 +65,10 @@ Route::middleware(['auth', 'verified'])->group(function () {
         ->middleware('throttle:30,1')
         ->name('push-subscriptions.store');
     Route::delete('/push-subscriptions', [PushSubscriptionController::class, 'destroy'])->name('push-subscriptions.destroy');
+
+    Route::post('/locations', [UserLocationController::class, 'store'])
+        ->middleware('throttle:30,1')
+        ->name('locations.store');
 
     Route::post('/institution-memberships', [InstitutionMembershipController::class, 'store'])
         ->name('institution-memberships.store');

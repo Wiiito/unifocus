@@ -145,4 +145,14 @@ class User extends Authenticatable
     {
         return $this->hasMany(PushSubscription::class);
     }
+
+    /**
+     * Posições capturadas pelo GPS do navegador.
+     *
+     * @return HasMany<UserLocation, $this>
+     */
+    public function locations(): HasMany
+    {
+        return $this->hasMany(UserLocation::class);
+    }
 }

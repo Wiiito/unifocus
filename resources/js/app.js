@@ -1,5 +1,8 @@
 import Alpine from 'alpinejs';
 import './pwa';
+import { LocationTracker } from './location-tracker';
+
+window.LocationTracker = LocationTracker;
 
 /**
  * Tema claro/escuro.
