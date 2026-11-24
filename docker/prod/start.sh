@@ -14,7 +14,9 @@ export GOOGLE_REDIRECT_URI="${GOOGLE_REDIRECT_URI:-${APP_URL}/auth/google/callba
 # Porta exigida pelo Render.
 sed -i "s/listen [0-9]*;/listen ${PORT:-10000};/" /etc/nginx/http.d/default.conf
 
-php artisan migrate --force
+# Migrations pela conexão direta (Neon: o pooler em modo transação não
+# guarda estado de sessão); o app segue usando DB_URL (pooled).
+DB_URL="${DB_MIGRATION_URL:-$DB_URL}" php artisan migrate --force
 php artisan optimize
 
 chown -R www-data:www-data storage bootstrap/cache

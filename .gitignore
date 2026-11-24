@@ -28,3 +28,4 @@ Thumbs.db
 
 # Herdado do projeto anterior
 .agents/mcp_config.json
+.neon

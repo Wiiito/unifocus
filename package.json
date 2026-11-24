@@ -19,5 +19,9 @@
     },
     "optionalDependencies": {
         "@laravel/multiplex": "^0.4.1"
+    },
+    "dependencies": {
+        "@neon/config": "^1.14.6",
+        "@neon/env": "^2.1.9"
     }
 }
