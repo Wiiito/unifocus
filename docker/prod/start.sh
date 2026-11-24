@@ -21,4 +21,9 @@ php artisan optimize
 
 chown -R www-data:www-data storage bootstrap/cache
 
+# Fila, agendador e FPM rodam como www-data: com HOME=/root o libpq tenta ler
+# /root/.postgresql (certificado de cliente) e falha com "Permission denied"
+# nas conexões SSL do Neon.
+export HOME=/var/www
+
 exec /usr/bin/supervisord -c /etc/supervisord.conf
