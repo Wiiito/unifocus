@@ -6,7 +6,8 @@ use Illuminate\Foundation\Http\FormRequest;
 
 /**
  * Pedido de amizade por e-mail exato: buscar por nome expõe quem usa a
- * plataforma, então só encontra quem a pessoa já sabe quem é.
+ * plataforma, então só encontra quem a pessoa já sabe quem é. A outra porta
+ * é o user_id de alguém da lista de pessoas próximas, conferido no controller.
  */
 class FriendRequestRequest extends FormRequest
 {
@@ -21,7 +22,8 @@ class FriendRequestRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'email' => ['required', 'string', 'email', 'max:255', 'exists:users,email'],
+            'email' => ['required_without:user_id', 'nullable', 'string', 'email', 'max:255', 'exists:users,email'],
+            'user_id' => ['required_without:email', 'nullable', 'integer'],
         ];
     }
 

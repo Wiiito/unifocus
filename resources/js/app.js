@@ -5,6 +5,63 @@ import { LocationTracker } from './location-tracker';
 window.LocationTracker = LocationTracker;
 
 /**
+ * Localização do estudante logado: o navegador pede a permissão assim que o
+ * app abre, e a posição é reenviada no máximo a cada LOCATION_INTERVAL_MS
+ * (base das "Pessoas próximas" na tela de amigos).
+ */
+const LOCATION_INTERVAL_MS = 10 * 60 * 1000;
+const LOCATION_SENT_AT_KEY = 'unifocus_location_sent_at';
+const locationEndpoint = document.querySelector('meta[name="location-endpoint"]')?.content;
+
+const readLocationSentAt = () => {
+    try {
+        return Number(localStorage.getItem(LOCATION_SENT_AT_KEY)) || 0;
+    } catch {
+        return 0;
+    }
+};
+
+const shareLocation = ({ onSuccess = () => {}, onError = () => {} } = {}) => {
+    new LocationTracker({
+        endpoint: locationEndpoint,
+        source: 'browser_gps',
+        onSuccess: (data) => {
+            try {
+                localStorage.setItem(LOCATION_SENT_AT_KEY, String(Date.now()));
+            } catch {
+                // Sem storage: só reenvia a posição na próxima abertura.
+            }
+            onSuccess(data);
+        },
+        onError,
+    }).captureOnce();
+};
+
+if (locationEndpoint && Date.now() - readLocationSentAt() > LOCATION_INTERVAL_MS) {
+    shareLocation({ onError: (err) => console.debug('[localização]', err.message) });
+}
+
+/** Botão "Atualizar" das pessoas próximas: envia a posição agora e recarrega a lista. */
+Alpine.data('shareLocationButton', () => ({
+    busy: false,
+
+    share() {
+        if (!locationEndpoint) {
+            return;
+        }
+
+        this.busy = true;
+        shareLocation({
+            onSuccess: () => window.location.reload(),
+            onError: (err) => {
+                this.busy = false;
+                alert(err.message);
+            },
+        });
+    },
+}));
+
+/**
  * Tema claro/escuro.
  *
  * O atributo data-theme no <html> é a única chave do tema: o Tailwind está

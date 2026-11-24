@@ -5,6 +5,10 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
     <meta name="csrf-token" content="{{ csrf_token() }}">
+    @auth
+        {{-- resources/js/app.js pede a localização ao abrir e envia para cá. --}}
+        <meta name="location-endpoint" content="{{ route('locations.store') }}">
+    @endauth
     <meta name="theme-color" content="#0061a4">
 
     <title>{{ config('app.name', 'UniFocus') }}</title>
